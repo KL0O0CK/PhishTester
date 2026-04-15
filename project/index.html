@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PhishTester - Симулятор фишинга</title>
+  <link rel="stylesheet" href="./static/style.css">
+</head>
+<body>
+  <nav class="topbar" aria-label="Навигация по разделам">
+    <div class="topbar__brand">
+      <span class="brand-badge">PT</span>
+      <div>
+        <p class="brand-title">PhishTester</p>
+        <p class="brand-subtitle">КиберПраво • тренажер</p>
+      </div>
+    </div>
+    <div class="topbar__controls">
+      <button id="tabTrainer" class="tab-btn is-active" type="button">Тренажер</button>
+      <button id="tabInfo" class="tab-btn" type="button">Информация</button>
+      <button id="tabAbout" class="tab-btn" type="button">О проекте</button>
+      <button id="themeToggle" class="theme-toggle" type="button" aria-label="Переключить тему">🌙 Темная тема</button>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero__content">
+      <p class="tag">Кибербезопасность и право РБ</p>
+      <h1>PhishTester: найди 3 признака фишинга</h1>
+      <p class="subtitle">
+        Сравни настоящий и поддельный сайт, нажми на уязвимые места справа
+        и получи правовую подсказку.
+      </p>
+      <div class="scoreboard" aria-live="polite">
+        <span>Уровень: <strong id="levelCount">1</strong>/3</span>
+        <span>Найдено: <strong id="foundCount">0</strong>/3</span>
+        <button id="nextLevelBtn" type="button" class="btn" hidden>Следующий уровень</button>
+        <button id="resetBtn" type="button" class="btn btn--secondary">Сброс</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="trainerView" class="view is-active">
+    <section class="layout">
+      <section class="browser-card browser-card--safe" aria-label="Пример безопасного сайта">
+        <div class="browser-top">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <div class="address-bar safe-url">
+            <span class="lock lock--safe" aria-hidden="true">🔒</span>
+            <span>https://secure-bank.by/login</span>
+          </div>
+        </div>
+        <div class="browser-body">
+          <h2>Безопасный вход</h2>
+          <p class="hint">Проверяй домен, значок замка и оформление страницы.</p>
+          <form class="login-form" aria-label="Демонстрационная форма">
+            <label>Логин
+              <input type="text" placeholder="ivan.petrov" disabled>
+            </label>
+            <label>Пароль
+              <input type="password" placeholder="********" disabled>
+            </label>
+            <button type="button" class="btn" disabled>Войти</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="browser-card browser-card--phish" aria-label="Пример фишингового сайта">
+        <div class="browser-top">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <div class="address-bar danger-url target-zone" data-zone="url">
+            <span class="lock lock--danger" aria-hidden="true">⚠</span>
+            <span id="phishUrl">http://secure-bаnk.by-login.com/auth</span>
+          </div>
+        </div>
+        <div class="browser-body">
+          <h2 id="phishTitle">Срочный вход: подтвердите аккаунт</h2>
+          <p id="phishWarning" class="warning">Внимание: если не войти за 5 минут, доступ будет заблокирован.</p>
+          <form class="login-form">
+            <label>Логин
+              <input type="text" placeholder="Введите логин">
+            </label>
+            <label id="dangerFieldLabel" class="target-zone" data-zone="field">
+              <span id="dangerFieldText">PIN-код карты</span>
+              <input id="dangerFieldInput" type="password" placeholder="1234">
+            </label>
+            <button id="phishActionBtn" type="button" class="btn btn--danger target-zone" data-zone="button">
+              Подтвердить и снять блокировку
+            </button>
+          </form>
+        </div>
+      </section>
+    </section>
+
+    <section id="resultPanel" class="result-panel" hidden>
+      <h3 id="resultTitle">Уровень пройден!</h3>
+      <p>Продолжай: каждый новый сценарий показывает другие уловки мошенников.</p>
+    </section>
+  </main>
+
+  <section id="infoView" class="view info-page" hidden>
+    <div class="info-card">
+      <h2>Как распознавать фишинг за 5 секунд</h2>
+      <p>
+        Фишинг - это метод социальной инженерии, при котором злоумышленник маскирует
+        поддельную страницу под настоящий сервис и пытается выманить логин, пароль,
+        данные карты или коды подтверждения. Главная цель - получить доступ к аккаунту
+        или деньгам.
+      </p>
+      <p>
+        Проверяй адресную строку: даже один лишний символ, подмена буквы (например,
+        латинская "a" на похожую) или лишний домен вида <em>bank-login-secure.com</em>
+        может указывать на подделку. Настоящие сервисы обычно используют короткие и
+        понятные домены.
+      </p>
+      <p>
+        Обращай внимание на поведение страницы: фразы "срочно", "иначе блокировка",
+        "подтвердите PIN", "введите SMS-код для разблокировки" - частые красные флаги.
+        Банки и крупные сервисы не просят вводить PIN-код или полный CVV в формах входа.
+      </p>
+      <p>
+        Правовой аспект РБ: незаконный сбор и использование персональных данных
+        нарушает Закон Республики Беларусь "О защите персональных данных". Попытки
+        хищения через поддельные ресурсы могут подпадать под нормы УК РБ, включая
+        ответственность за хищение путем модификации компьютерной информации.
+      </p>
+      <p>
+        Практическое правило: не переходи по сомнительным ссылкам из писем и мессенджеров,
+        вручную вводи адрес сайта, включай двухфакторную аутентификацию и проверяй
+        историю входов в аккаунт.
+      </p>
+    </div>
+  </section>
+
+  <section id="aboutView" class="view info-page" hidden>
+    <div class="info-card">
+      <h2>О проекте</h2>
+      <p>
+        Данный проект делал Максим Клочков, учащийся средней школы номер 2 города Чаусы.
+      </p>
+      <p>
+        Проект создан для конкурса «КиберПраво» и направлен на обучение распознаванию
+        фишинговых угроз в интернете.
+      </p>
+    </div>
+  </section>
+
+  <div id="legalModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
+    <div class="modal__content">
+      <button id="closeModal" class="modal__close" type="button" aria-label="Закрыть окно">×</button>
+      <h3 id="modalTitle">Правовая справка</h3>
+      <p id="modalText"></p>
+    </div>
+  </div>
+
+  <script src="./static/script.js"></script>
+</body>
+</html>
